@@ -18,13 +18,13 @@ import java.util.*
 class PropertyControllerIT : BaseIT() {
 
     @Test
-    fun shouldCreateProperty() {
+    fun `Should create property`() {
         val propertyCreateDTO = PropertyCreateDTO("test description")
         createProperty(propertyCreateDTO)
     }
 
     @Test
-    fun shouldFindById() {
+    fun `Should find by id`() {
         val propertyCreateDTO = PropertyCreateDTO("test description")
         val property = createProperty(propertyCreateDTO)
 
@@ -39,7 +39,7 @@ class PropertyControllerIT : BaseIT() {
     }
 
     @Test
-    fun shouldNotFindById() {
+    fun `Should not find by id`() {
         given()
             .`when`()
             .get("/properties/{id}", UUID.fromString("9baf7b7d-5ac7-4b91-8058-71df99283c79"))
@@ -49,7 +49,7 @@ class PropertyControllerIT : BaseIT() {
     }
 
     @Test
-    fun shouldFindAll() {
+    fun `Should find all`() {
         val propertyCreateDTO1 = PropertyCreateDTO("test description 1")
         val property1 = createProperty(propertyCreateDTO1)
 
@@ -66,7 +66,25 @@ class PropertyControllerIT : BaseIT() {
     }
 
     @Test
-    fun shouldFindAllFilteredByDescription() {
+    fun `Should find all paginated`() {
+        val propertyCreateDTO1 = PropertyCreateDTO("test description 1")
+        val property1 = createProperty(propertyCreateDTO1)
+
+        val propertyCreateDTO2 = PropertyCreateDTO("test description 2")
+        createProperty(propertyCreateDTO2)
+
+        given()
+            .`when`()
+            .queryParam("pageSize", "1")
+            .get("/properties")
+            .then()
+            .statusCode(SC_OK)
+            .body("content.size()", equalTo(1))
+            .body("content.id", hasItems(property1.id.toString()))
+    }
+
+    @Test
+    fun `Should find all filtered by description`() {
         val propertyCreateDTO = PropertyCreateDTO("test description")
         val property = createProperty(propertyCreateDTO)
 
@@ -83,7 +101,7 @@ class PropertyControllerIT : BaseIT() {
     }
 
     @Test
-    fun shouldUpdateProperty() {
+    fun `Should update property`() {
         val propertyCreateDTO = PropertyCreateDTO("test description")
         val property = createProperty(propertyCreateDTO)
 
